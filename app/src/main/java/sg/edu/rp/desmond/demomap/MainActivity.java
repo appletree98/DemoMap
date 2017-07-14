@@ -1,5 +1,7 @@
 package sg.edu.rp.desmond.demomap;
 
+import android.Manifest;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
@@ -21,35 +23,45 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn1,btn2,btn3;
+    Button btn1, btn2, btn3;
     private GoogleMap map;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         FragmentManager fm = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment)
                 fm.findFragmentById(R.id.map);
-
-
 
         mapFragment.getMapAsync(new OnMapReadyCallback(){
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
-                
+                LatLng poi_CausewayPoint = new LatLng(1.436065, 103.786263);
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(poi_CausewayPoint,
+                        15));
+
                 UiSettings ui = map.getUiSettings();
+                ui.setZoomControlsEnabled(true);
                 ui.setCompassEnabled(true);
 
-                ui.setZoomControlsEnabled(true);
+                int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION);
 
-                LatLng poi_CausewayPoint = new LatLng(1.436065, 103.786263);
+                if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
+                    map.setMyLocationEnabled(true);
+                    ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+                } else {
+                    Log.e("GMap - Permission", "GPS access has not been granted");
+                }
+
+                LatLng CausewayPoint = new LatLng(1.436065, 103.786263);
                 Marker cp = map.addMarker(new
                         MarkerOptions()
-                        .position(poi_CausewayPoint)
+                        .position(CausewayPoint)
                         .title("Causeway Point")
                         .snippet("Shopping after class")
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
@@ -62,23 +74,11 @@ public class MainActivity extends AppCompatActivity {
                         .snippet("C347 Android Programming II")
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)));
 
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(poi_CausewayPoint,
-                        15));
-
-
-                int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION);
-
-                if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
-                    map.setMyLocationEnabled(true);
-                } else {
-                    Log.e("GMap - Permission", "GPS access has not been granted");
-                }
-
 
 
 
             }
+
         });
 
         btn1 = (Button) findViewById(R.id.btn1);
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
     }
 
