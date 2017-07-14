@@ -44,18 +44,17 @@ public class MainActivity extends AppCompatActivity {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(poi_CausewayPoint,
                         15));
 
-                UiSettings ui = map.getUiSettings();
-                ui.setZoomControlsEnabled(true);
-                ui.setCompassEnabled(true);
+
 
                 int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION);
 
                 if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
                     map.setMyLocationEnabled(true);
-                    ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
                 } else {
                     Log.e("GMap - Permission", "GPS access has not been granted");
+                    ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+                    return;
                 }
 
                 LatLng CausewayPoint = new LatLng(1.436065, 103.786263);
@@ -74,7 +73,9 @@ public class MainActivity extends AppCompatActivity {
                         .snippet("C347 Android Programming II")
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)));
 
-
+                UiSettings ui = map.getUiSettings();
+                ui.setZoomControlsEnabled(true);
+                ui.setCompassEnabled(true);
 
 
             }
